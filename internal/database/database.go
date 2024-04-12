@@ -13,6 +13,7 @@ func ParseData(dbUser, dbPass string) (string, error) {
 		dbPass,
 	)
 	conn, err := pgx.Connect(context.Background(), url)
+	// wait for postgres to start
 	for err != nil {
 		conn, err = pgx.Connect(context.Background(), url)
 	}

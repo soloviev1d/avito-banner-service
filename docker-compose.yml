@@ -13,17 +13,12 @@ services:
       - /var/lib/postgresql/data
 
   server:
-    build: 
-      dockerfile: Dockerfile
-      context: ./server
-    volumes:
-      - .:/app
+    build: ./
     depends_on: 
       - postgres_db
     environment: 
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    network_mode: host
     ports:
       - '8080:8080'
 

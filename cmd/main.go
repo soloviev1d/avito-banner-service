@@ -29,4 +29,5 @@ func main() {
 
 func homeGet(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "<h1>%s</h1>", globStr)
+	fmt.Println(r.Header)
 }
