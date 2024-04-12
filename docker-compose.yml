@@ -21,6 +21,9 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - '8080:8080'
+    links:
+      - postgres_db
+
 
 volumes:
   postgres_db:

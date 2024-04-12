@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -15,7 +16,9 @@ func ParseData(dbUser, dbPass string) (string, error) {
 	conn, err := pgx.Connect(context.Background(), url)
 	// wait for postgres to start
 	for err != nil {
+		fmt.Println(err)
 		conn, err = pgx.Connect(context.Background(), url)
+		time.Sleep(1)
 	}
 
 	var (
