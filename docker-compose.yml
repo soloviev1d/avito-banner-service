@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  postgres_db:
+    image: postgres:latest
+    container_name: PostgresContainer
+    restart: always
+    environment: 
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports: 
+      - '5432:5432'
+    volumes: 
+      - /var/lib/postgresql/data
+
+  server:
+    build: 
+      dockerfile: Dockerfile
+      context: ./server
+    volumes:
+      - .:/app
+    depends_on: 
+      - postgres_db
+    environment: 
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    network_mode: host
+    ports:
+      - '8080:8080'
+
+volumes:
+  postgres_db:
+    driver: local
