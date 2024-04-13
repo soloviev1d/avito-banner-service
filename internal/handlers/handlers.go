@@ -70,13 +70,13 @@ func GetUserBanner(c echo.Context) error {
 				return c.String(http.StatusNotFound, "Баннер для пользователя не найден")
 			}
 			cache.BannerCache.Data[cache.AssembleCacheKey(tagId, featureId)] = banner
-			return c.JSON(http.StatusOK, banner)
+			return c.JSON(http.StatusOK, banner.ToBanner())
 		} else {
 			banner, ok := cache.BannerCache.Data[cache.AssembleCacheKey(tagId, featureId)]
 			if !ok {
 				return c.String(http.StatusNotFound, "Баннер для пользователя не найден")
 			}
-			return c.JSON(http.StatusOK, banner)
+			return c.JSON(http.StatusOK, banner.ToBanner())
 		}
 	} else {
 		coldBanner, ok := cache.BannerCache.Data[cache.AssembleCacheKey(tagId, featureId)]
@@ -84,7 +84,7 @@ func GetUserBanner(c echo.Context) error {
 			return c.String(http.StatusNotFound, "Баннер для пользователя не найден")
 		}
 		if !hotData && coldBanner.IsActive {
-			return c.JSON(http.StatusOK, coldBanner)
+			return c.JSON(http.StatusOK, coldBanner.ToBanner())
 		}
 		if !hotData && !coldBanner.IsActive {
 			return c.String(http.StatusForbidden, "Пользователь не имеет доступа")
@@ -92,7 +92,7 @@ func GetUserBanner(c echo.Context) error {
 		if hotData {
 			banner := database.GetUserBanner(tagId, featureId)
 			if banner.IsActive {
-				return c.JSON(http.StatusOK, banner)
+				return c.JSON(http.StatusOK, banner.ToBanner())
 			} else {
 				return c.String(http.StatusForbidden, "Пользователь не имеет доступа")
 			}
