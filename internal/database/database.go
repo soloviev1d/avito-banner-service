@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/soloviev1d/avito-banner-service/internal/structs"
 )
 
 var (
@@ -62,4 +63,50 @@ func initQuery() (string, error) {
 		return "", err
 	}
 	return string(b), err
+}
+
+func GetAllBanners() ([]*structs.UniqueBanner, error) {
+	var (
+		query = `SELECT 
+			* 
+		FROM banners
+		LEFT JOIN features ON banners.id = features.banner_id
+		LEFT JOIN tags ON banners.id = tags.banner_id;`
+		bannerTitle     string
+		bannerText      string
+		bannerUrl       string
+		bannerIsActive  bool
+		bannerTagId     int
+		bannerFeatureId int
+		uniqueBanners   []*structs.UniqueBanner
+	)
+
+	rows, err := conn.Query(context.Background(), query)
+	if err != nil {
+		return nil, fmt.Errorf("Failed to fetch banners: %v\n", err)
+	}
+	for rows.Next() {
+		if err = rows.Scan(
+			&bannerTitle,
+			&bannerText,
+			&bannerUrl,
+			&bannerIsActive,
+			&bannerTagId,
+			&bannerFeatureId,
+		); err != nil {
+			log.Println("Failed to scan row", err)
+		}
+		uniqueBanners = append(uniqueBanners,
+			&structs.UniqueBanner{
+				Title:     bannerTitle,
+				Text:      bannerText,
+				Url:       bannerUrl,
+				IsActive:  bannerIsActive,
+				TagId:     bannerTagId,
+				FeatureId: bannerFeatureId,
+			},
+		)
+	}
+
+	return uniqueBanners, nil
 }

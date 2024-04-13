@@ -2,7 +2,8 @@ CREATE TABLE IF NOT EXISTS "banners" (
   "id" bigserial PRIMARY KEY,
   "title" varchar(512) NOT NULL,
   "data" text NOT NULL,
-  "url" varchar(2048) NOT NULL
+  "url" varchar(2048) NOT NULL,
+  "is_active" boolean DEFAULT true
 );
 
 CREATE TABLE IF NOT EXISTS "features" (
@@ -17,15 +18,6 @@ CREATE TABLE IF NOT EXISTS "tags" (
 
 COMMENT ON COLUMN "banners"."url" IS 'max url length for browsers';
 
-CREATE TABLE IF NOT EXISTS "features_banners" (
-  "features_banner_id" integer,
-  "banners_id" bigserial,
-  PRIMARY KEY ("features_banner_id", "banners_id")
-);
-
-ALTER TABLE "features_banners" ADD FOREIGN KEY ("features_banner_id") REFERENCES "features" ("banner_id");
-
-ALTER TABLE "features_banners" ADD FOREIGN KEY ("banners_id") REFERENCES "banners" ("id");
 
 ALTER TABLE "tags" ADD FOREIGN KEY ("banner_id") REFERENCES "banners" ("id");
 
