@@ -20,3 +20,19 @@ type UniqueBanner struct {
 	TagId     int    `json:"tag_id,omitempty"`
 	FeatureId int    `json:"feature_id,omitempty"`
 }
+
+type Banner struct {
+	Title    string `json:"title,omitempty"`
+	Text     string `json:"text,omitempty"`
+	Url      string `json:"url,omitempty"`
+	IsActive bool   `json:"is_active,omitempty"`
+}
+
+func (b *UniqueBanner) ToBanner() *Banner {
+	return &Banner{
+		Title:    b.Title,
+		Text:     b.Text,
+		Url:      b.Url,
+		IsActive: b.IsActive,
+	}
+}

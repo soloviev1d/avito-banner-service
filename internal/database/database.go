@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"fmt"
+	"go/token"
 	"log"
 	"os"
 	"time"
@@ -109,4 +110,58 @@ func GetAllBanners() ([]*structs.UniqueBanner, error) {
 	}
 
 	return uniqueBanners, nil
+}
+
+func GetUserAccess(token string) int {
+	var (
+		accessLevel = 0
+		query       = "SELECT user_role_id FROM user_session WHERE token=$1"
+	)
+	if err := conn.QueryRow(
+		context.Background(),
+		query,
+		token,
+	).Scan(&accessLevel); err != nil {
+		return 0
+	}
+	return accessLevel
+}
+
+func GetUserBanner(tag, feature int) *structs.UniqueBanner {
+	var (
+		query = `SELECT 
+			* 
+		FROM banners
+		LEFT JOIN features ON banners.id = features.banner_id
+		LEFT JOIN tags ON banners.id = tags.banner_id
+		WHERE tags.id = $1 AND features.id = $2`
+		bannerTitle     string
+		bannerText      string
+		bannerUrl       string
+		bannerIsActive  bool
+		bannerTagId     int
+		bannerFeatureId int
+	)
+
+	if err := conn.QueryRow(context.Background(), query, tag, feature).Scan(
+		&bannerTitle,
+		&bannerText,
+		&bannerUrl,
+		&bannerIsActive,
+		&bannerTagId,
+		&bannerFeatureId,
+	); err != nil {
+		return nil
+	}
+
+	banner := &structs.UniqueBanner{
+		Title:     bannerTitle,
+		Text:      bannerText,
+		Url:       bannerUrl,
+		IsActive:  bannerIsActive,
+		TagId:     bannerTagId,
+		FeatureId: bannerFeatureId,
+	}
+
+	return banner
 }

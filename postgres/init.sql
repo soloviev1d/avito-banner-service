@@ -41,9 +41,9 @@ ON CONFLICT
   DO NOTHING;
 
 WITH data AS (
-  SELECT gen_random_uuid() AS token, 1 AS user_role_id
+  SELECT 'f139b375-1c04-4295-8897-901653e2bc02' AS token, 1 AS user_role_id
   UNION ALL
-  SELECT gen_random_uuid(), 2
+  SELECT '247406c0-2591-4e4a-87cc-45803a795dbd', 2
 )
 INSERT INTO "user_session" (token, user_role_id)
 SELECT token, user_role_id
